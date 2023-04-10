@@ -1,6 +1,26 @@
 const express = require("express");
+const mongoose = require("mongoose");
+
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 
 const app = express();
+
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+const db = mongoose.connection;
+
+db.on("error", () => {
+  console.log("mongodb error!");
+});
+
+db.once("open", () => {
+  console.log("mongodb connected");
+});
 
 app.get("/", (req, res) => {
   res.send("Hello world");
@@ -9,5 +29,3 @@ app.get("/", (req, res) => {
 app.listen(3000, () => {
   console.log("App is running on port 3000");
 });
-
-// mongodb+srv://annie:wan@cluster.do56qa3.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
